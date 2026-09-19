@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 instance/
 .env
+.env.local
+.env*.local
+
+.vercel
+
+.env*

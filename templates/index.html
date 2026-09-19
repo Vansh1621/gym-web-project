@@ -3,6 +3,7 @@
 {% block content %}
 
 <section class="hero">
+  <video class="hero-video" src="{{ url_for('static', filename='video/gym-showcase.mp4') }}" autoplay loop muted playsinline></video>
   <div class="container hero-inner">
     <p class="eyebrow">Indore's strength &amp; conditioning gym</p>
     <h1>Train with the heart<br>of a lion.</h1>
@@ -11,18 +12,6 @@
     <div class="cta-row">
       <a class="btn btn-primary" href="{{ url_for('pricing') }}">See membership plans</a>
       <a class="btn btn-ghost" href="{{ url_for('contact') }}">Book a free trial</a>
-    </div>
-  </div>
-</section>
-
-<section class="section video-section">
-  <div class="container">
-    <h2 class="section-title">See D-Lion Gym in action</h2>
-    <p class="section-sub">A quick look inside the gym.</p>
-    <div class="video-wrap">
-      <video src="{{ url_for('static', filename='video/gym-showcase.mp4') }}" controls loop playsinline preload="auto">
-        Your browser doesn't support embedded video.
-      </video>
     </div>
   </div>
 </section>
