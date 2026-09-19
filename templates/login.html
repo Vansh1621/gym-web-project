@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Login — D Lion Gym{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="container auth-wrap">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="muted">Log in as a member to view your plan, or as staff to manage members.</p>
+      <form method="post" class="stack-form">
+        <label>Email
+          <input type="email" name="email" required autofocus placeholder="you@example.com">
+        </label>
+        <label>Password
+          <input type="password" name="password" required placeholder="••••••••">
+        </label>
+        <button class="btn btn-primary btn-block" type="submit">Log in</button>
+      </form>
+      <div class="demo-box">
+        <p class="muted"><strong>Demo logins</strong></p>
+        <p class="muted">Staff: admin@dlion.gym / admin123</p>
+        <p class="muted">Member: rahul@example.com / member123</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

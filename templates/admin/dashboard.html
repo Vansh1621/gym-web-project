@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard — D Lion Gym{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Staff dashboard</p>
+    <h1>Member overview</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-4 stat-cards">
+      <div class="info-card"><h4>Total members</h4><p class="big">{{ total }}</p></div>
+      <div class="info-card"><h4>Active</h4><p class="big status-pill status-active">{{ active }}</p></div>
+      <div class="info-card"><h4>Inactive</h4><p class="big status-pill status-inactive">{{ inactive }}</p></div>
+      <div class="info-card"><h4>Frozen</h4><p class="big status-pill status-frozen">{{ frozen }}</p></div>
+    </div>
+
+    <div class="admin-toolbar">
+      <a class="btn btn-primary" href="{{ url_for('admin_member_new') }}">+ Add member</a>
+      <a class="btn btn-ghost" href="{{ url_for('admin_members') }}">View all members</a>
+    </div>
+
+    <h3 class="section-title" style="margin-top:2.5rem">Recently added</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Plan</th><th>Status</th><th>Joined</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for m in recent %}
+          <tr>
+            <td>{{ m['full_name'] }}</td>
+            <td>{{ m['plan'] }}</td>
+            <td><span class="status-pill status-{{ m['status'] }}">{{ m['status'] }}</span></td>
+            <td>{{ m['join_date'] }}</td>
+            <td><a href="{{ url_for('admin_member_edit', member_id=m['id']) }}">Edit</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="muted">No members yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

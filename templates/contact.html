@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Contact — D Lion Gym{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Contact</p>
+    <h1>Come see the gym.</h1>
+    <p class="lead">Walk in, call, or send a message — a real person will get back to you.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <h2 class="section-title">Details</h2>
+      <p><strong>Address</strong><br>23/1, Yeshwant Niwas Road, opp. Rani Sati Gate,<br>Yeshwant Colony, Indore, Madhya Pradesh</p>
+      <p><strong>Hours</strong><br>Mon&ndash;Sat, 6:00 AM &ndash; 10:00 PM<br>Sunday, 8:00 AM &ndash; 1:30 PM</p>
+      <p><strong>Phone</strong><br>+91 74711 11309</p>
+      <p><strong>WhatsApp</strong><br><a href="https://wa.me/919217002598" target="_blank" rel="noopener">+91 92170 02598</a></p>
+      <p><a class="btn btn-ghost" href="https://share.google/eWTP1LOJQDycUr3FO" target="_blank" rel="noopener">Get directions on Google Maps</a></p>
+    </div>
+    <div class="quote-card">
+      <h2 class="section-title" style="margin-top:0">Book a free trial</h2>
+      <form class="contact-form" onsubmit="event.preventDefault(); this.querySelector('.form-note').style.display='block';">
+        <label>Name<input type="text" required></label>
+        <label>Phone<input type="tel" required></label>
+        <label>Preferred program
+          <select>
+            <option>Strength &amp; Weight Training</option>
+            <option>Cardio</option>
+            <option>Zumba</option>
+            <option>Dance Fitness</option>
+            <option>Personal Training</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">Request a call back</button>
+        <p class="form-note muted" style="display:none">Thanks! Our front desk will call you shortly.</p>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

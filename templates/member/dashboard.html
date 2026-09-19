@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}My Account — D Lion Gym{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">My account</p>
+    <h1>Hi {{ g.user['full_name'].split(' ')[0] }}.</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% if member %}
+      <div class="grid grid-3 stat-cards">
+        <div class="info-card">
+          <h4>Plan</h4>
+          <p class="big">{{ member['plan'] }}</p>
+        </div>
+        <div class="info-card">
+          <h4>Status</h4>
+          <p class="big"><span class="status-pill status-{{ member['status'] }}">{{ member['status'] }}</span></p>
+        </div>
+        <div class="info-card">
+          <h4>Renews / expires</h4>
+          <p class="big">{{ member['expiry_date'] or '—' }}</p>
+          {% if days_left is not none %}
+            <p class="muted">
+              {% if days_left >= 0 %}{{ days_left }} days left{% else %}Expired {{ -days_left }} days ago{% endif %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="detail-panel">
+        <h3>Membership details</h3>
+        <p><strong>Member since:</strong> {{ member['join_date'] }}</p>
+        <p><strong>Phone on file:</strong> {{ member['phone'] or '—' }}</p>
+        {% if member['notes'] %}<p><strong>Notes from the front desk:</strong> {{ member['notes'] }}</p>{% endif %}
+      </div>
+    {% else %}
+      <div class="detail-panel">
+        <p>We couldn't find a membership record linked to <strong>{{ g.user['email'] }}</strong> yet.
+          Please check in at the front desk so our staff can set up your membership profile.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

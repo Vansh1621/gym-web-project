@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if mode == 'edit' else 'Add' }} Member — D Lion Gym{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Customer management</p>
+    <h1>{{ 'Edit member' if mode == 'edit' else 'Add a new member' }}</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <form method="post" class="stack-form form-grid">
+      <label>Full name
+        <input type="text" name="full_name" required value="{{ member['full_name'] if member else '' }}">
+      </label>
+      <label>Email
+        <input type="email" name="email" required value="{{ member['email'] if member else '' }}">
+      </label>
+      <label>Phone
+        <input type="tel" name="phone" value="{{ member['phone'] if member else '' }}">
+      </label>
+      <label>Plan
+        <select name="plan">
+          {% for p in ['Basic', 'Gold', 'Platinum'] %}
+            <option value="{{ p }}" {{ 'selected' if member and member['plan']==p }}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Status
+        <select name="status">
+          {% for s in ['active', 'inactive', 'frozen'] %}
+            <option value="{{ s }}" {{ 'selected' if member and member['status']==s }}>{{ s|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Join date
+        <input type="date" name="join_date" required value="{{ member['join_date'] if member else '' }}">
+      </label>
+      <label>Expiry date
+        <input type="date" name="expiry_date" value="{{ member['expiry_date'] if member else '' }}">
+      </label>
+      <label class="full-width">Notes
+        <textarea name="notes" rows="3">{{ member['notes'] if member else '' }}</textarea>
+      </label>
+      <div class="full-width form-actions">
+        <button class="btn btn-primary" type="submit">{{ 'Save changes' if mode == 'edit' else 'Add member' }}</button>
+        <a class="btn btn-ghost" href="{{ url_for('admin_members') }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

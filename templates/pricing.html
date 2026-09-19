@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Pricing — D Lion Gym{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Membership</p>
+    <h1>Membership plans</h1>
+    <p class="lead">Every plan includes full gym floor access. Ask our front desk for current
+      pricing and offers — placeholders below are a starting layout for you to fill in.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container grid grid-3 pricing-grid">
+    <div class="price-card">
+      <h3>Basic</h3>
+      <p class="price">Contact us<span>for pricing</span></p>
+      <ul class="check-list">
+        <li>Full gym floor access</li>
+        <li>Cardio &amp; strength equipment</li>
+        <li>1 free trial session</li>
+      </ul>
+      <a class="btn btn-ghost" href="{{ url_for('contact') }}">Ask about this plan</a>
+    </div>
+    <div class="price-card featured">
+      <p class="badge">Most popular</p>
+      <h3>Gold</h3>
+      <p class="price">Contact us<span>for pricing</span></p>
+      <ul class="check-list">
+        <li>Everything in Basic</li>
+        <li>Unlimited Zumba &amp; dance fitness classes</li>
+        <li>Monthly progress check-in</li>
+      </ul>
+      <a class="btn btn-primary" href="{{ url_for('contact') }}">Ask about this plan</a>
+    </div>
+    <div class="price-card">
+      <h3>Platinum</h3>
+      <p class="price">Contact us<span>for pricing</span></p>
+      <ul class="check-list">
+        <li>Everything in Gold</li>
+        <li>Personal training sessions</li>
+        <li>Priority scheduling</li>
+      </ul>
+      <a class="btn btn-ghost" href="{{ url_for('contact') }}">Ask about this plan</a>
+    </div>
+  </div>
+  <p class="fine-print">Membership sign-up is finalized at the front desk (Yeshwant Colony, Indore) or by
+    calling +91 74711 11309. Existing members can view their plan and renewal date by logging in above.</p>
+</section>
+{% endblock %}

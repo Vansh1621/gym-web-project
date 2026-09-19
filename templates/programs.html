@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Programs — D Lion Gym{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Programs</p>
+    <h1>Pick a path, or mix them all.</h1>
+    <p class="lead">Every plan gives you full gym access. These programs are how you'll
+      actually spend your time here.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container grid grid-3 service-grid">
+    <div class="service-card"><span class="num">01</span><h3>Strength &amp; Weight Training</h3><p>Free weights and machines for building muscle and power, at every level.</p></div>
+    <div class="service-card"><span class="num">02</span><h3>Cardio</h3><p>Treadmills, bikes, and conditioning equipment for endurance and fat loss.</p></div>
+    <div class="service-card"><span class="num">03</span><h3>Zumba</h3><p>High-energy, instructor-led Zumba sessions for a fun full-body workout.</p></div>
+    <div class="service-card"><span class="num">04</span><h3>Dance Fitness</h3><p>Dance-based classes that turn cardio into something you look forward to.</p></div>
+    <div class="service-card"><span class="num">05</span><h3>Personal Training</h3><p>1-on-1 coaching with an experienced trainer, built around your goals.</p></div>
+    <div class="service-card"><span class="num">06</span><h3>General Fitness</h3><p>A clean, spacious floor open 7 days a week for your own workout routine.</p></div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container cta-band-inner">
+    <h2>Not sure where to start?</h2>
+    <p>Book a free trial and a coach will help you pick the right program.</p>
+    <a class="btn btn-primary" href="{{ url_for('contact') }}">Book a free trial</a>
+  </div>
+</section>
+{% endblock %}

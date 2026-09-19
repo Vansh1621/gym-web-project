@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}D Lion Gym — Train Like a Lion{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-inner">
+    <p class="eyebrow">Indore's strength &amp; conditioning gym</p>
+    <h1>Train with the heart<br>of a lion.</h1>
+    <p class="lead">D Lion Gym is a minimal, no-nonsense space built for people who want real
+      results: strength training, cardio, and coaching that keeps you accountable.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="{{ url_for('pricing') }}">See membership plans</a>
+      <a class="btn btn-ghost" href="{{ url_for('contact') }}">Book a free trial</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container stat-row">
+    <div class="stat"><span class="stat-num">4.5/5</span><span class="stat-label">Google rating</span></div>
+    <div class="stat"><span class="stat-num">100+</span><span class="stat-label">Member reviews</span></div>
+    <div class="stat"><span class="stat-num">7</span><span class="stat-label">Days a week</span></div>
+    <div class="stat"><span class="stat-num">16</span><span class="stat-label">Hours open daily</span></div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <h2 class="section-title">What you get</h2>
+    <p class="section-sub">Six essentials, no clutter.</p>
+    <div class="grid grid-3 service-grid">
+      <div class="service-card"><span class="num">01</span><h3>Strength &amp; Weight Training</h3><p>A full weight-lifting floor with well-maintained, quality equipment.</p></div>
+      <div class="service-card"><span class="num">02</span><h3>Cardio</h3><p>Treadmills, bikes, and rowers for endurance work.</p></div>
+      <div class="service-card"><span class="num">03</span><h3>Zumba</h3><p>High-energy Zumba sessions for a fun, calorie-burning workout.</p></div>
+      <div class="service-card"><span class="num">04</span><h3>Dance Fitness</h3><p>Dance-based fitness classes that make cardio feel effortless.</p></div>
+      <div class="service-card"><span class="num">05</span><h3>Personal Coaching</h3><p>Experienced trainers who build a plan around your goals.</p></div>
+      <div class="service-card"><span class="num">06</span><h3>Clean, Spacious Facility</h3><p>A clean, hygienic, spacious space near Indore BG railway station.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <h2 class="section-title">Why D Lion Gym</h2>
+      <ul class="check-list">
+        <li>Clean, well-maintained equipment — always.</li>
+        <li>Small class sizes so coaches actually know your name.</li>
+        <li>Transparent pricing with no hidden charges.</li>
+        <li>A member portal to track your plan and renewal date.</li>
+      </ul>
+      <a class="btn btn-primary" href="{{ url_for('about') }}">More about us</a>
+    </div>
+    <div class="quote-card">
+      <p class="section-title" style="margin-top:0; font-size:1.4rem;">4.5&nbsp;★ on Google</p>
+      <p>Rated 4.5 out of 5 from 100+ Google reviews. Members consistently mention the
+        well-maintained equipment, clean environment, and friendly, experienced trainers.</p>
+      <p class="quote-author"><a href="https://share.google/eWTP1LOJQDycUr3FO" target="_blank" rel="noopener">See our reviews on Google →</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="section cta-band">
+  <div class="container cta-band-inner">
+    <h2>Ready to start?</h2>
+    <p>Your first session is on us. No pressure, no long tours — just come train.</p>
+    <a class="btn btn-primary" href="{{ url_for('contact') }}">Book your free trial</a>
+  </div>
+</section>
+
+{% endblock %}
