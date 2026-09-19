@@ -49,13 +49,27 @@ def register_routes(app):
 
     @app.before_request
     def load_logged_in_user():
-        user_id = session.get("user_id")
-        if user_id is None:
-            g.user = None
-        else:
-            db = db_module.get_db()
-            res = db.table("users").select("*").eq("id", user_id).execute()
+        role = session.get("role")
+        identity_id = session.get("identity_id")
+        g.user = None
+        g.member = None
+        if identity_id is None:
+            return
+        db = db_module.get_db()
+        if role == "admin":
+            res = db.table("users").select("*").eq("id", identity_id).execute()
             g.user = res.data[0] if res.data else None
+        elif role == "member":
+            res = db.table("members").select("*").eq("id", identity_id).execute()
+            member = res.data[0] if res.data else None
+            if member:
+                g.member = member
+                g.user = {
+                    "id": member["id"],
+                    "full_name": member["full_name"],
+                    "email": member["email"],
+                    "role": "member",
+                }
 
     @app.context_processor
     def inject_globals():
@@ -93,23 +107,31 @@ def register_routes(app):
     def login():
         if request.method == "POST":
             email = request.form.get("email", "").strip().lower()
-            password = request.form.get("password", "")
+            password = request.form.get("password", "").strip()
             db = db_module.get_db()
-            res = db.table("users").select("*").eq("email", email).execute()
-            user = res.data[0] if res.data else None
 
-            error = None
-            if user is None or not check_password_hash(user["password_hash"], password):
-                error = "Incorrect email or password."
-
-            if error is None:
+            # Staff log in with a real password set by an admin.
+            staff_res = db.table("users").select("*").eq("email", email).execute()
+            staff = staff_res.data[0] if staff_res.data else None
+            if staff and check_password_hash(staff["password_hash"], password):
                 session.clear()
-                session["user_id"] = user["id"]
-                flash(f"Welcome back, {user['full_name'].split(' ')[0]}!", "success")
-                if user["role"] == "admin":
-                    return redirect(url_for("admin_dashboard"))
+                session["role"] = "admin"
+                session["identity_id"] = staff["id"]
+                flash(f"Welcome back, {staff['full_name'].split(' ')[0]}!", "success")
+                return redirect(url_for("admin_dashboard"))
+
+            # Members log in with the phone number staff put on file for them --
+            # no separate account needs to be created when a member is added.
+            member_res = db.table("members").select("*").eq("email", email).execute()
+            member = member_res.data[0] if member_res.data else None
+            if member and password and member.get("phone") and _digits(password) == _digits(member["phone"]):
+                session.clear()
+                session["role"] = "member"
+                session["identity_id"] = member["id"]
+                flash(f"Welcome back, {member['full_name'].split(' ')[0]}!", "success")
                 return redirect(url_for("member_dashboard"))
-            flash(error, "error")
+
+            flash("Incorrect email or password.", "error")
         return render_template("login.html")
 
     @app.route("/logout")
@@ -123,9 +145,7 @@ def register_routes(app):
     @app.route("/member/dashboard")
     @login_required
     def member_dashboard():
-        db = db_module.get_db()
-        res = db.table("members").select("*").eq("email", g.user["email"]).execute()
-        member = res.data[0] if res.data else None
+        member = g.member
         days_left = None
         if member and member["expiry_date"]:
             try:
@@ -241,6 +261,10 @@ def register_routes(app):
         return redirect(url_for("admin_members"))
 
 
+def _digits(value):
+    return "".join(ch for ch in value if ch.isdigit())
+
+
 def _member_form_data():
     return {
         "full_name": request.form.get("full_name", "").strip(),
@@ -259,6 +283,8 @@ def _validate_member(data):
         return "Full name is required."
     if not data["email"] or "@" not in data["email"]:
         return "A valid email is required."
+    if not _digits(data["phone"]):
+        return "A phone number is required -- the member logs in with it as their password."
     if not data["join_date"]:
         return "Join date is required."
     return None

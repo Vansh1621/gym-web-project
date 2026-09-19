@@ -37,24 +37,20 @@ def is_unique_violation(err):
 
 
 def seed_db():
-    """Insert a demo admin, a demo member login, and a handful of member records."""
+    """Insert a demo admin and a handful of member records.
+
+    Members don't get a `users` row -- they log in with their email and the
+    phone number on file for them, checked straight against `members`.
+    """
     db = get_db()
     today = date.today()
 
-    db.table("users").insert([
-        {
-            "full_name": "Gym Admin",
-            "email": "admin@dlion.gym",
-            "password_hash": generate_password_hash("admin123"),
-            "role": "admin",
-        },
-        {
-            "full_name": "Rahul Mehta",
-            "email": "rahul@example.com",
-            "password_hash": generate_password_hash("member123"),
-            "role": "member",
-        },
-    ]).execute()
+    db.table("users").insert({
+        "full_name": "Gym Admin",
+        "email": "admin@dlion.gym",
+        "password_hash": generate_password_hash("admin123"),
+        "role": "admin",
+    }).execute()
 
     demo_members = [
         ("Rahul Mehta", "rahul@example.com", "9876500001", "Gold", today - timedelta(days=40), today + timedelta(days=320), "active", "Prefers evening slot"),

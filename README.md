@@ -10,7 +10,7 @@ Live site: https://d-lion-gym.vercel.app
 ## What's included
 
 - **Public site**: Home, About, Programs, Trainers, Pricing, Contact
-- **Login**: one login page for both members and staff (role decided by the account)
+- **Login**: staff use a real password (set via `create-admin`); members log in with their email and the phone number staff put on file for them -- no separate account needs creating when a member is added
 - **Member dashboard**: a logged-in member sees their own plan, status, and renewal date
 - **Admin dashboard** (`/admin`): member counts by status, recently added members
 - **Member management** (`/admin/members`): search/filter, add, edit, delete member records
@@ -55,10 +55,10 @@ flask --app app seed-db     # adds demo accounts + members
 
 ### Demo logins
 
-| Role   | Email                 | Password  |
-|--------|------------------------|-----------|
-| Staff  | admin@dlion.gym        | admin123  |
-| Member | rahul@example.com      | member123 |
+| Role   | Email                 | Password              |
+|--------|------------------------|-----------------------|
+| Staff  | admin@dlion.gym        | admin123              |
+| Member | rahul@example.com      | 9876500001 (their phone) |
 
 **Change the admin password (and the `SECRET_KEY`) before using this for a real gym.**
 

@@ -18,8 +18,9 @@
         <input type="email" name="email" required value="{{ member['email'] if member else '' }}">
       </label>
       <label>Phone
-        <input type="tel" name="phone" value="{{ member['phone'] if member else '' }}">
+        <input type="tel" name="phone" required value="{{ member['phone'] if member else '' }}">
       </label>
+      <p class="muted full-width" style="margin: -0.6rem 0 0; font-size: 0.85rem;">The member logs in with this email and this phone number as their password.</p>
       <label>Plan
         <select name="plan">
           {% for p in ['Basic', 'Gold', 'Platinum'] %}
