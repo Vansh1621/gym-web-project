@@ -5,7 +5,7 @@ marketing site, a login page, a member self-service dashboard, and an admin
 area for staff to manage member records (add / edit / search / delete).
 Deployed on Vercel.
 
-Live site: https://gym-web-project.vercel.app
+Live site: https://gym-web-project-two.vercel.app
 
 ## What's included
 
@@ -82,8 +82,14 @@ static/js/main.js      Mobile nav toggle
 
 ## Deployment
 
-Live on **Vercel**, connected to this GitHub repo — every push to `main`
-triggers a new deployment automatically. Data lives in **Supabase** Postgres.
+Live on **Vercel** (project `gym-web-project`), deployed directly from this
+repo's code. Data lives in **Supabase** Postgres.
+
+Auto-deploy on `git push` isn't wired up yet — Vercel's GitHub App needs to
+be linked to this account first (Vercel dashboard → Settings → Git → Connect
+GitHub). Once that's done, connect the repo in the Vercel dashboard
+(Project → Settings → Git) and every push to `main` will deploy automatically.
+Until then, redeploy from the Vercel dashboard or CLI after pushing changes.
 
 Environment variables set on Vercel (Project Settings → Environment Variables):
 
