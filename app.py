@@ -12,21 +12,10 @@ def create_app():
     app = Flask(__name__)
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY", "dev-secret-change-me"),
-        # DATABASE_PATH lets you point at a persistent disk mount in production
-        # (e.g. Render/Railway persistent volumes) instead of the app folder,
-        # which is wiped on every redeploy.
-        DATABASE=os.environ.get("DATABASE_PATH", os.path.join(app.instance_path, "dlion.sqlite3")),
+        SUPABASE_URL=os.environ.get("SUPABASE_URL"),
+        SUPABASE_SERVICE_ROLE_KEY=os.environ.get("SUPABASE_SERVICE_ROLE_KEY"),
     )
-    os.makedirs(app.instance_path, exist_ok=True)
-    os.makedirs(os.path.dirname(app.config["DATABASE"]) or ".", exist_ok=True)
     db_module.init_app(app)
-
-    # Auto-create + seed the database on first run so the app works out of the box.
-    if not os.path.exists(app.config["DATABASE"]):
-        with app.app_context():
-            db_module.init_db()
-            db_module.seed_db()
-
     register_routes(app)
     return app
 
@@ -65,7 +54,8 @@ def register_routes(app):
             g.user = None
         else:
             db = db_module.get_db()
-            g.user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+            res = db.table("users").select("*").eq("id", user_id).execute()
+            g.user = res.data[0] if res.data else None
 
     @app.context_processor
     def inject_globals():
@@ -105,7 +95,8 @@ def register_routes(app):
             email = request.form.get("email", "").strip().lower()
             password = request.form.get("password", "")
             db = db_module.get_db()
-            user = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+            res = db.table("users").select("*").eq("email", email).execute()
+            user = res.data[0] if res.data else None
 
             error = None
             if user is None or not check_password_hash(user["password_hash"], password):
@@ -133,7 +124,8 @@ def register_routes(app):
     @login_required
     def member_dashboard():
         db = db_module.get_db()
-        member = db.execute("SELECT * FROM members WHERE email = ?", (g.user["email"],)).fetchone()
+        res = db.table("members").select("*").eq("email", g.user["email"]).execute()
+        member = res.data[0] if res.data else None
         days_left = None
         if member and member["expiry_date"]:
             try:
@@ -149,13 +141,13 @@ def register_routes(app):
     @admin_required
     def admin_dashboard():
         db = db_module.get_db()
-        total = db.execute("SELECT COUNT(*) c FROM members").fetchone()["c"]
-        active = db.execute("SELECT COUNT(*) c FROM members WHERE status='active'").fetchone()["c"]
-        inactive = db.execute("SELECT COUNT(*) c FROM members WHERE status='inactive'").fetchone()["c"]
-        frozen = db.execute("SELECT COUNT(*) c FROM members WHERE status='frozen'").fetchone()["c"]
-        recent = db.execute(
-            "SELECT * FROM members ORDER BY created_at DESC LIMIT 5"
-        ).fetchall()
+        total = db.table("members").select("id", count="exact").execute().count
+        active = db.table("members").select("id", count="exact").eq("status", "active").execute().count
+        inactive = db.table("members").select("id", count="exact").eq("status", "inactive").execute().count
+        frozen = db.table("members").select("id", count="exact").eq("status", "frozen").execute().count
+        recent = (
+            db.table("members").select("*").order("created_at", desc=True).limit(5).execute().data
+        )
         return render_template(
             "admin/dashboard.html",
             total=total, active=active, inactive=inactive, frozen=frozen, recent=recent,
@@ -169,21 +161,21 @@ def register_routes(app):
         status = request.args.get("status", "")
         plan = request.args.get("plan", "")
 
-        sql = "SELECT * FROM members WHERE 1=1"
-        params = []
-        if q:
-            sql += " AND (full_name LIKE ? OR email LIKE ? OR phone LIKE ?)"
-            like = f"%{q}%"
-            params += [like, like, like]
+        query = db.table("members").select("*")
         if status:
-            sql += " AND status = ?"
-            params.append(status)
+            query = query.eq("status", status)
         if plan:
-            sql += " AND plan = ?"
-            params.append(plan)
-        sql += " ORDER BY full_name ASC"
+            query = query.eq("plan", plan)
+        members = query.order("full_name").execute().data
 
-        members = db.execute(sql, params).fetchall()
+        if q:
+            ql = q.lower()
+            members = [
+                m for m in members
+                if ql in (m["full_name"] or "").lower()
+                or ql in (m["email"] or "").lower()
+                or ql in (m.get("phone") or "").lower()
+            ]
         return render_template(
             "admin/members.html", members=members, q=q, status=status, plan=plan
         )
@@ -199,14 +191,10 @@ def register_routes(app):
                 return render_template("admin/member_form.html", member=data, mode="new")
             db = db_module.get_db()
             try:
-                db.execute(
-                    """INSERT INTO members (full_name, email, phone, plan, join_date, expiry_date, status, notes)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                    (data["full_name"], data["email"], data["phone"], data["plan"],
-                     data["join_date"], data["expiry_date"], data["status"], data["notes"]),
-                )
-                db.commit()
-            except db_module.sqlite3.IntegrityError:
+                db.table("members").insert(data).execute()
+            except db_module.APIError as e:
+                if not db_module.is_unique_violation(e):
+                    raise
                 flash("A member with that email already exists.", "error")
                 return render_template("admin/member_form.html", member=data, mode="new")
             flash(f"Added {data['full_name']} to the member list.", "success")
@@ -217,7 +205,8 @@ def register_routes(app):
     @admin_required
     def admin_member_edit(member_id):
         db = db_module.get_db()
-        existing = db.execute("SELECT * FROM members WHERE id = ?", (member_id,)).fetchone()
+        existing_res = db.table("members").select("*").eq("id", member_id).execute()
+        existing = existing_res.data[0] if existing_res.data else None
         if existing is None:
             flash("Member not found.", "error")
             return redirect(url_for("admin_members"))
@@ -229,14 +218,10 @@ def register_routes(app):
                 flash(error, "error")
                 return render_template("admin/member_form.html", member=data, mode="edit", member_id=member_id)
             try:
-                db.execute(
-                    """UPDATE members SET full_name=?, email=?, phone=?, plan=?, join_date=?,
-                       expiry_date=?, status=?, notes=? WHERE id=?""",
-                    (data["full_name"], data["email"], data["phone"], data["plan"],
-                     data["join_date"], data["expiry_date"], data["status"], data["notes"], member_id),
-                )
-                db.commit()
-            except db_module.sqlite3.IntegrityError:
+                db.table("members").update(data).eq("id", member_id).execute()
+            except db_module.APIError as e:
+                if not db_module.is_unique_violation(e):
+                    raise
                 flash("A member with that email already exists.", "error")
                 return render_template("admin/member_form.html", member=data, mode="edit", member_id=member_id)
             flash(f"Updated {data['full_name']}.", "success")
@@ -248,9 +233,9 @@ def register_routes(app):
     @admin_required
     def admin_member_delete(member_id):
         db = db_module.get_db()
-        member = db.execute("SELECT full_name FROM members WHERE id = ?", (member_id,)).fetchone()
-        db.execute("DELETE FROM members WHERE id = ?", (member_id,))
-        db.commit()
+        member_res = db.table("members").select("full_name").eq("id", member_id).execute()
+        member = member_res.data[0] if member_res.data else None
+        db.table("members").delete().eq("id", member_id).execute()
         if member:
             flash(f"Removed {member['full_name']} from the member list.", "success")
         return redirect(url_for("admin_members"))
