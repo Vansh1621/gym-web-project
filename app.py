@@ -2,7 +2,7 @@ import os
 from datetime import date, datetime
 from functools import wraps
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash, g
+from flask import Flask, render_template, request, redirect, url_for, session, flash, g, Response
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import db as db_module
@@ -100,6 +100,20 @@ def register_routes(app):
     @app.route("/contact")
     def contact():
         return render_template("contact.html")
+
+    @app.route("/robots.txt")
+    def robots_txt():
+        base = request.host_url.rstrip("/")
+        body = f"User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /member\nSitemap: {base}/sitemap.xml\n"
+        return Response(body, mimetype="text/plain")
+
+    @app.route("/sitemap.xml")
+    def sitemap_xml():
+        base = request.host_url.rstrip("/")
+        pages = [home, about, programs, trainers, pricing, contact]
+        urls = "".join(f"<url><loc>{base}{url_for(p.__name__)}</loc></url>" for p in pages)
+        body = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
+        return Response(body, mimetype="application/xml")
 
     # ---------- auth ----------
 
