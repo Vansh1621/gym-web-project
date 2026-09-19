@@ -1,5 +1,5 @@
 """
-Database helpers for D Lion Gym.
+Database helpers for D-Lion Gym.
 
 Talks to Postgres through the Supabase REST API (via the `supabase` Python
 client) instead of a local file, so the app works on serverless hosts like

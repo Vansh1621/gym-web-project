@@ -1,11 +1,11 @@
-# D Lion Gym — Website + Customer Management System
+# D-Lion Gym — Website + Customer Management System
 
 A minimal gym website built with Flask + Supabase (Postgres): a public
 marketing site, a login page, a member self-service dashboard, and an admin
 area for staff to manage member records (add / edit / search / delete).
 Deployed on Vercel.
 
-Live site: https://gym-web-project-two.vercel.app
+Live site: https://d-lion-gym.vercel.app
 
 ## What's included
 
