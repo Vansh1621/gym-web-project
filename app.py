@@ -153,7 +153,11 @@ def register_routes(app):
                 days_left = (exp - date.today()).days
             except ValueError:
                 days_left = None
-        return render_template("member/dashboard.html", member=member, days_left=days_left)
+        return render_template(
+            "member/dashboard.html",
+            member=member,
+            days_left=days_left,
+        )
 
     # ---------- admin: customer management system ----------
 
